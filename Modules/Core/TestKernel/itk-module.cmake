@@ -5,6 +5,7 @@ system supporting ITK.")
 
 itk_module(ITKTestKernel
   DEPENDS
+    ITKIOGDAL
     ITKIOBioRad
     ITKIOBMP
     ITKIOGDCM

@@ -35,6 +35,7 @@ itk_module(ITKReview
     ITKImageStatistics
     ITKIOImageBase
     ITKIOBioRad
+    ITKIOGDAL
     ITKIOBMP
     ITKIOGDCM
     ITKIOGE

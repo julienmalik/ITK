@@ -17,6 +17,7 @@
  *=========================================================================*/
 #ifndef __itkTestDriverIncludeRequiredIOFactories_h
 #define __itkTestDriverIncludeRequiredIOFactories_h
+#include "itkGDALImageIOFactory.h"
 #include "itkGDCMImageIOFactory.h"
 #include "itkMetaImageIOFactory.h"
 #include "itkJPEGImageIOFactory.h"
@@ -31,6 +32,7 @@
 #include "itkObjectFactoryBase.h"
 
 void RegisterRequiredFactories(){
+  itk::ObjectFactoryBase::RegisterFactory( itk::GDALImageIOFactory::New() );
   itk::ObjectFactoryBase::RegisterFactory( itk::MetaImageIOFactory::New() );
   itk::ObjectFactoryBase::RegisterFactory( itk::GDCMImageIOFactory::New() );
   itk::ObjectFactoryBase::RegisterFactory( itk::JPEGImageIOFactory::New() );
