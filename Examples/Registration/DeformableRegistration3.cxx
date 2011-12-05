@@ -41,6 +41,7 @@
 #include "itkSymmetricForcesDemonsRegistrationFilter.h"
 #include "itkHistogramMatchingImageFilter.h"
 #include "itkCastImageFilter.h"
+#include "itkVectorIndexSelectionCastImageFilter.h"
 #include "itkWarpImageFilter.h"
 // Software Guide : EndCodeSnippet
 
@@ -230,6 +231,7 @@ int main( int argc, char *argv[] )
   // Software Guide : BeginCodeSnippet
   typedef itk::Vector< float, Dimension >                VectorPixelType;
   typedef itk::Image<  VectorPixelType, Dimension >      DisplacementFieldType;
+  typedef itk::Image<  float, Dimension >                DisplacementFieldComponentType;
   typedef itk::SymmetricForcesDemonsRegistrationFilter<
                                 InternalImageType,
                                 InternalImageType,
@@ -255,7 +257,9 @@ int main( int argc, char *argv[] )
 
   // Software Guide : BeginCodeSnippet
   filter->SetFixedImage( fixedImageCaster->GetOutput() );
-  filter->SetMovingImage( matcher->GetOutput() );
+  //filter->SetMovingImage( matcher->GetOutput() );
+  filter->SetMovingImage( movingImageCaster->GetOutput() );
+
   // Software Guide : EndCodeSnippet
 
 
@@ -271,8 +275,8 @@ int main( int argc, char *argv[] )
   // Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  filter->SetNumberOfIterations( 50 );
-  filter->SetStandardDeviations( 1.0 );
+  filter->SetNumberOfIterations( 100 );
+  filter->SetStandardDeviations( 3.0 );
   // Software Guide : EndCodeSnippet
 
 
@@ -395,13 +399,31 @@ int main( int argc, char *argv[] )
     {
 
   // Software Guide : BeginCodeSnippet
+  typedef itk::VectorIndexSelectionCastImageFilter
+      < DisplacementFieldType, DisplacementFieldComponentType > VectorIndexSelectionCastImageFilterType;
+  VectorIndexSelectionCastImageFilterType::Pointer selector = VectorIndexSelectionCastImageFilterType::New();
+
+  selector->SetInput(filter->GetOutput());
   typedef itk::ImageFileWriter< DisplacementFieldType > FieldWriterType;
 
-  FieldWriterType::Pointer fieldWriter = FieldWriterType::New();
-  fieldWriter->SetFileName( argv[4] );
-  fieldWriter->SetInput( filter->GetOutput() );
+  FieldWriterType::Pointer fieldWriter;
 
+  std::string filenamebase = argv[4];
+
+  selector->SetIndex(0);
+  fieldWriter = FieldWriterType::New();
+  fieldWriter->SetInput( filter->GetOutput() );
+  fieldWriter->SetFileName( filenamebase );
   fieldWriter->Update();
+
+/*
+  selector->SetIndex(1);
+  fieldWriter = FieldWriterType::New();
+  fieldWriter->SetInput( selector->GetOutput() );
+  fieldWriter->SetFileName( filenamebase + "_y.tif" );
+  fieldWriter->Update();
+*/
+
   // Software Guide : EndCodeSnippet
 
   // Software Guide : BeginLatex

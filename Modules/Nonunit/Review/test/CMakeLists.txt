@@ -11,6 +11,7 @@ itkConformalFlatteningQuadEdgeMeshFilterTest.cxx
 itkContourExtractor2DImageFilterTest.cxx
 itkDiffeomorphicDemonsRegistrationFilterTest.cxx
 itkDiffeomorphicDemonsRegistrationFilterTest2.cxx
+itkDiffeomorphicDemonsRegistrationWithMaskFilterTest.cxx
 itkDirectFourierReconstructionImageToImageFilterTest.cxx
 itkDiscreteGaussianDerivativeImageFilterScaleSpaceTest.cxx
 itkDiscreteGaussianDerivativeImageFilterTest.cxx
@@ -167,6 +168,8 @@ itk_add_test(NAME itkContourExtractor2DImageFilterTest
 itk_add_test(NAME itkDiffeomorphicDemonsRegistrationFilterTest01
       COMMAND ITKReviewTestDriver itkDiffeomorphicDemonsRegistrationFilterTest
               0 0 0.001 20.0 200 0.01 0.08 5 10)
+itk_add_test(NAME iitkDiffeomorphicDemonsRegistrationWithMaskFilterTest
+             COMMAND ITKReviewTestDriver itkDiffeomorphicDemonsRegistrationWithMaskFilterTest)
 itk_add_test(NAME itkDiffeomorphicDemonsRegistrationFilterTest02
       COMMAND ITKReviewTestDriver --redirectOutput itkDiffeomorphicDemonsRegistrationFilterTest02 --redirectOutput ${TEMP}/itkDiffeomorphicDemonsRegistrationFilterTest02.txt
           itkDiffeomorphicDemonsRegistrationFilterTest
