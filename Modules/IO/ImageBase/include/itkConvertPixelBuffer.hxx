@@ -20,6 +20,7 @@
 #include "itkConvertPixelBuffer.h"
 
 #include "itkRGBPixel.h"
+#include "itkMatrix.h"
 
 #include <stddef.h>
 
@@ -704,6 +705,96 @@ ConvertPixelBuffer< InputPixelType, OutputPixelType, OutputConvertTraits >
     {
     OutputConvertTraits::SetNthComponent( 0, *outputData,
                                           static_cast<  OutputComponentType >( *inputData ) );
+    ++outputData;
+    ++inputData;
+    }
+}
+
+template<typename InputType, typename OutputType>
+OutputType
+SpecialCast(const std::complex<InputType>& in, const OutputType& itkNotUsed(dummy))
+{
+  typedef typename itk::NumericTraits<std::complex<InputType> >::RealType       RealType;
+  typedef typename itk::NumericTraits<std::complex<InputType> >::ScalarRealType ScalarRealType;
+
+  RealType    inReal( static_cast<ScalarRealType>(in.real()), static_cast<ScalarRealType>(in.imag()) );
+
+  return static_cast < OutputType >( vcl_abs(inReal) );
+}
+
+template<typename InputType, typename OutputType>
+std::complex<OutputType>
+SpecialCast(const std::complex<InputType>& in, const std::complex<OutputType>& itkNotUsed(dummy))
+{
+  std::complex<OutputType>  output(static_cast<OutputType>(in.real()),
+                                   static_cast<OutputType>(in.imag()));
+  return output;
+}
+
+template<typename InputType, typename OutputType, unsigned VRows, unsigned VCols >
+itk::Matrix<OutputType, VRows, VCols>
+SpecialCast(const std::complex<InputType>& itkNotUsed(in), const itk::Matrix<OutputType, VRows, VCols>& itkNotUsed(dummy))
+{
+  // this case does not make sense but is here just to keep the compiler quiet
+  return itk::Matrix<OutputType, VRows, VCols>();
+}
+
+template < typename InputPixelType,
+           typename OutputPixelType,
+           class OutputConvertTraits
+           >
+void
+ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
+::ConvertComplexToGray(std::complex<InputPixelType>* inputData,
+                      int itkNotUsed(inputNumberOfComponents),
+                      OutputPixelType* outputData , size_t size)
+{
+  OutputPixelType dummy;
+  std::complex<InputPixelType>* endInput = inputData + size;
+  while(inputData != endInput)
+    {
+    OutputPixelType input =static_cast<OutputPixelType>(SpecialCast(*inputData,dummy));
+    OutputConvertTraits::SetNthComponent(0, *outputData, input);
+    inputData++;
+    outputData++;
+    }
+}
+
+template < typename InputPixelType,
+           typename OutputPixelType,
+           class OutputConvertTraits >
+void
+ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
+::ConvertComplexVectorImageToVectorImage(std::complex<InputPixelType> *inputData,
+                     int inputNumberOfComponents,
+                     OutputPixelType *outputData , size_t size)
+{
+  size_t length = size* (size_t)inputNumberOfComponents;
+  for( size_t i=0; i< length/2; i++ )
+    {
+    OutputConvertTraits::SetNthComponent( 0, *outputData, (*inputData).real());
+    ++outputData;
+    OutputConvertTraits::SetNthComponent( 0, *outputData, (*inputData).imag());
+    ++outputData;
+    ++inputData;
+    }
+}
+
+template < typename InputPixelType,
+           typename OutputPixelType,
+           class OutputConvertTraits >
+void
+ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
+::ConvertComplexVectorImageToVectorImageComplex(std::complex<InputPixelType> *inputData,
+                     int inputNumberOfComponents,
+                     OutputPixelType *outputData , size_t size)
+{
+  size_t length = size* (size_t)inputNumberOfComponents;
+  OutputPixelType dummy;
+  for( size_t i=0; i< length; i++ )
+    {
+    OutputConvertTraits::SetNthComponent( 0, *outputData,
+                                          SpecialCast(*inputData, dummy));
     ++outputData;
     ++inputData;
     }

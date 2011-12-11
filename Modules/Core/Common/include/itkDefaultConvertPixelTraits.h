@@ -58,6 +58,9 @@ public:
   static void SetNthComponent(int c, PixelType & pixel, const ComponentType & v)
   { pixel.SetNthComponent(c, v); }
 
+  static void SetNthComponent(int itkNotUsed(c), PixelType & pixel, const PixelType& v)
+  { pixel = v; }
+
   /** Return a single scalar value from this pixel. */
   static ComponentType GetScalarValue(const PixelType & pixel)
   { return pixel.GetScalarValue(); }
@@ -124,6 +127,10 @@ public:
     {
       pixel[i] = v;
     }
+  static void SetNthComponent(int i, TargetType & pixel, const TargetType & v)
+    {
+      pixel = v;
+    }
   static ComponentType GetScalarValue(const TargetType &pixel)
     {
       return pixel[0];
@@ -153,6 +160,11 @@ public:
                                 const ComponentType &v)                 \
     {                                                                   \
       pixel[i] = v;                                                     \
+    }                                                                   \
+    static void SetNthComponent(int , TargetType & pixel,               \
+                                const TargetType& v)                    \
+    {                                                                   \
+      pixel = v;                                                        \
     }                                                                   \
     static ComponentType GetNthComponent(int i, const TargetType pixel) \
     {                                                                   \
@@ -196,6 +208,11 @@ public:
   {
     pixel[i] = v;
   }
+  static void SetNthComponent(int, TargetType & pixel,
+                              const TargetType & v)
+  {
+    pixel = v;
+  }
   static ComponentType GetNthComponent(int i, const TargetType & pixel)
   {
     return pixel[i];
@@ -233,6 +250,11 @@ public:
       const unsigned int col = i % VCols;
       pixel[row][col] = v;
     }
+  static void SetNthComponent(int, TargetType & pixel,
+                              const TargetType & v)
+    {
+      pixel = v;
+    }
   static ComponentType GetScalarValue(const TargetType &pixel)
     {
       return pixel[0][0];
@@ -263,6 +285,10 @@ public:
         {
         pixel = TargetType(pixel.real(), v);
         }
+    }
+  static void SetNthComponent(int itkNotUsed(i), TargetType & pixel, const TargetType &v)
+    {
+      pixel = v;
     }
   static ComponentType GetScalarValue(const TargetType &pixel)
     {
