@@ -114,6 +114,7 @@ public:
   typedef typename OutputImageType::IndexValueType    IndexValueType;
   typedef typename OutputImageType::SizeType          SizeType;
   typedef typename OutputImageType::PixelType         PixelType;
+  typedef typename OutputImageType::InternalPixelType InternalPixelType;
   typedef typename OutputImageType::SpacingType       SpacingType;
 
   /** Determine the image dimension. */
@@ -241,8 +242,8 @@ public:
                    ( Concept::SameDimension< ImageDimension, InputImageDimension > ) );
   itkConceptMacro( SameDimensionCheck2,
                    ( Concept::SameDimension< ImageDimension, DisplacementFieldDimension > ) );
-  itkConceptMacro( InputHasNumericTraitsCheck,
-                   ( Concept::HasNumericTraits< typename TInputImage::PixelType > ) );
+ // itkConceptMacro( InputHasNumericTraitsCheck,
+ //                  ( Concept::HasNumericTraits< typename TInputImage::PixelType > ) );
   itkConceptMacro( DisplacementFieldHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< typename TDisplacementField::PixelType::ValueType > ) );
   /** End concept checking */
