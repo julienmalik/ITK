@@ -102,7 +102,7 @@ public:
    * SCALAR pixel type or elements of a compound pixel.
    */
   typedef  enum { UNKNOWNCOMPONENTTYPE, UCHAR, CHAR, USHORT, SHORT, UINT, INT,
-                  ULONG, LONG, FLOAT, DOUBLE } IOComponentType;
+                  ULONG, LONG, FLOAT, DOUBLE, CSHORT, CINT, CFLOAT, CDOUBLE } IOComponentType;
 
   /** Set/Get the number of independent variables (dimensions) in the
    * image being read or written. Note this is not necessarily what
@@ -505,9 +505,9 @@ public:
   template <typename TPixel>
     void SetPixelTypeInfo(const std::complex< TPixel > *)
   {
-    this->SetNumberOfComponents(2);
+    this->SetNumberOfComponents(1);
     this->SetPixelType(COMPLEX);
-    this->SetComponentType(MapPixelType<TPixel>::CType);
+    this->SetComponentType(MapPixelType< std::complex<TPixel> >::CType);
   }
 
   template <unsigned VLength>
@@ -662,6 +662,10 @@ IMAGEIOBASE_TYPEMAP(long, LONG);
 IMAGEIOBASE_TYPEMAP(unsigned long, ULONG);
 IMAGEIOBASE_TYPEMAP(float, FLOAT);
 IMAGEIOBASE_TYPEMAP(double, DOUBLE);
+IMAGEIOBASE_TYPEMAP(std::complex<short>, CSHORT);
+IMAGEIOBASE_TYPEMAP(std::complex<int>, CINT);
+IMAGEIOBASE_TYPEMAP(std::complex<float>, CFLOAT);
+IMAGEIOBASE_TYPEMAP(std::complex<double>, CDOUBLE);
 #undef IMAGIOBASE_TYPEMAP
 
 

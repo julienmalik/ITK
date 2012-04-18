@@ -27,6 +27,7 @@
 
 #include "itksys/SystemTools.hxx"
 #include <fstream>
+#include <complex>
 
 namespace itk
 {
@@ -523,6 +524,56 @@ ImageFileReader< TOutputImage, ConvertPixelTraits >
       }                                                                 \
     }
 
+#define ITK_CONVERT_CBUFFER_IF_BLOCK(_CType, type)                      \
+ else if(m_ImageIO->GetComponentType() == _CType)                       \
+   {                                                                    \
+   if( isVectorImage )                                                  \
+     {                                                                  \
+     if( (typeid(OutputImagePixelType) == typeid(std::complex<double>))     \
+         || (typeid(OutputImagePixelType) == typeid(std::complex<float>))   \
+         || (typeid(OutputImagePixelType) == typeid(std::complex<int>))     \
+         || (typeid(OutputImagePixelType) == typeid(std::complex<short>)) ) \
+      {                                                                 \
+      ConvertPixelBuffer<                                               \
+        type::value_type,                                               \
+        OutputImagePixelType,                                           \
+        ConvertPixelTraits                                              \
+        >                                                               \
+        ::ConvertComplexVectorImageToVectorImageComplex(                \
+         static_cast< type * >( inputData),                             \
+         m_ImageIO->GetNumberOfComponents(),                            \
+         outputData,                                                    \
+         numberOfPixels);                                               \
+       }                                                                \
+     else                                                               \
+     {                                                                  \
+      ConvertPixelBuffer<                                               \
+        type::value_type,                                               \
+        OutputImagePixelType,                                           \
+        ConvertPixelTraits                                              \
+        >                                                               \
+        ::ConvertComplexVectorImageToVectorImage(                       \
+       static_cast<type* >(inputData),                                  \
+       m_ImageIO->GetNumberOfComponents(),                              \
+       outputData,                                                      \
+       numberOfPixels);                                                 \
+    }                                                                   \
+     }                                                                  \
+   else                                                                 \
+     {                                                                  \
+     ConvertPixelBuffer<                                                \
+      type::value_type,                                                 \
+      OutputImagePixelType,                                             \
+      ConvertPixelTraits                                                \
+      >                                                                 \
+      ::ConvertComplexToGray(                                           \
+       static_cast<type*>(inputData),                                   \
+       m_ImageIO->GetNumberOfComponents(),                              \
+       outputData,                                                      \
+       numberOfPixels);                                                 \
+     }                                                                  \
+  }
+
   if(0) {}
   ITK_CONVERT_BUFFER_IF_BLOCK(ImageIOBase::UCHAR,unsigned char)
   ITK_CONVERT_BUFFER_IF_BLOCK(ImageIOBase::CHAR,char)
@@ -534,6 +585,10 @@ ImageFileReader< TOutputImage, ConvertPixelTraits >
   ITK_CONVERT_BUFFER_IF_BLOCK(ImageIOBase::LONG,long)
   ITK_CONVERT_BUFFER_IF_BLOCK(ImageIOBase::FLOAT,float)
   ITK_CONVERT_BUFFER_IF_BLOCK(ImageIOBase::DOUBLE,double)
+  ITK_CONVERT_CBUFFER_IF_BLOCK(ImageIOBase::CFLOAT, std::complex<float>)
+  ITK_CONVERT_CBUFFER_IF_BLOCK(ImageIOBase::CDOUBLE, std::complex<double>)
+  ITK_CONVERT_CBUFFER_IF_BLOCK(ImageIOBase::CINT, std::complex<int>)
+  ITK_CONVERT_CBUFFER_IF_BLOCK(ImageIOBase::CSHORT, std::complex<short>)
   else
     {
 #define TYPENAME(x)                                     \
@@ -563,6 +618,7 @@ ImageFileReader< TOutputImage, ConvertPixelTraits >
     return;
     }
 #undef ITK_CONVERT_BUFFER_IF_BLOCK
+#undef ITK_CONVERT_CBUFFER_IF_BLOCK
 }
 } //namespace ITK
 

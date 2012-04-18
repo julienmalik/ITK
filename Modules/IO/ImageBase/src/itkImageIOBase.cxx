@@ -190,6 +190,14 @@ const std::type_info & ImageIOBase::GetComponentTypeInfo() const
       return typeid( float );
     case DOUBLE:
       return typeid( double );
+    case CSHORT:
+      return typeid( std::complex<short> );
+    case CINT:
+      return typeid( std::complex<int> );
+    case CFLOAT:
+      return typeid( std::complex<float> );
+    case CDOUBLE:
+      return typeid( std::complex<double> );
     case UNKNOWNCOMPONENTTYPE:
     default:
       itkExceptionMacro ("Unknown component type: " << m_ComponentType);
@@ -360,6 +368,14 @@ unsigned int ImageIOBase::GetComponentSize() const
       return sizeof( float );
     case DOUBLE:
       return sizeof( double );
+    case CSHORT:
+      return sizeof( std::complex<short> );
+    case CINT:
+      return sizeof( std::complex<int> );
+    case CFLOAT:
+      return sizeof( std::complex<float> );
+    case CDOUBLE:
+      return sizeof( std::complex<double> );
     case UNKNOWNCOMPONENTTYPE:
     default:
       itkExceptionMacro ("Unknown component type: " << m_ComponentType);
@@ -421,6 +437,14 @@ std::string ImageIOBase::GetComponentTypeAsString(IOComponentType t)
       return std::string( "float" );
     case DOUBLE:
       return std::string( "double" );
+    case CSHORT:
+      return std::string( "complex_short" );
+    case CINT:
+      return std::string( "complex_int" );
+    case CFLOAT:
+      return std::string( "complex_float" );
+    case CDOUBLE:
+      return std::string( "complex_double" );
     case UNKNOWNCOMPONENTTYPE:
       return std::string( "unknown" );
     default:
@@ -469,6 +493,22 @@ ImageIOBase::IOComponentType ImageIOBase::GetComponentTypeFromString(const std::
   else if(typeString.compare("double") == 0)
     {
     return DOUBLE;
+    }
+  else if(typeString.compare("complex_short") == 0)
+    {
+    return CSHORT;
+    }
+  else if(typeString.compare("complex_int") == 0)
+    {
+    return CINT;
+    }
+  else if(typeString.compare("complex_float") == 0)
+    {
+    return CFLOAT;
+    }
+  else if(typeString.compare("complex_double") == 0)
+    {
+    return CDOUBLE;
     }
   else
     {
@@ -658,6 +698,37 @@ void ImageIOBase::WriteBufferAsASCII(std::ostream & os, const void *buffer,
       }
       break;
 
+    case CSHORT:
+      {
+      typedef const std::complex<short> * Type;
+      Type buf = reinterpret_cast<Type>( buffer );
+      WriteBuffer(os, buf, numComp);
+      }
+      break;
+
+    case CINT:
+      {
+      typedef const std::complex<int> * Type;
+      Type buf = reinterpret_cast<Type>( buffer );
+      WriteBuffer(os, buf, numComp);
+      }
+      break;
+
+    case CFLOAT:
+      {
+      typedef const std::complex<float> * Type;
+      Type buf = reinterpret_cast<Type>( buffer );
+      WriteBuffer(os, buf, numComp);
+      }
+      break;
+
+    case CDOUBLE:
+      {
+      typedef const std::complex<double> * Type;
+      Type buf = reinterpret_cast<Type>( buffer );
+      WriteBuffer(os, buf, numComp);
+      }
+      break;
     default:
       break;
     }
@@ -747,6 +818,34 @@ void ImageIOBase::ReadBufferAsASCII(std::istream & is, void *buffer,
     case DOUBLE:
       {
       double *buf = reinterpret_cast< double * >( buffer );
+      ReadBuffer(is, buf, numComp);
+      }
+      break;
+
+    case CSHORT:
+      {
+      std::complex<short> *buf = reinterpret_cast<std::complex<short>*>( buffer );
+      ReadBuffer(is, buf, numComp);
+      }
+      break;
+
+    case CINT:
+      {
+      std::complex<int> *buf = reinterpret_cast<std::complex<int>*>( buffer );
+      ReadBuffer(is, buf, numComp);
+      }
+      break;
+
+    case CFLOAT:
+      {
+      std::complex<float> *buf = reinterpret_cast<std::complex<float>*>( buffer );
+      ReadBuffer(is, buf, numComp);
+      }
+      break;
+
+    case CDOUBLE:
+      {
+      std::complex<double> *buf = reinterpret_cast<std::complex<double>*>( buffer );
       ReadBuffer(is, buf, numComp);
       }
       break;
