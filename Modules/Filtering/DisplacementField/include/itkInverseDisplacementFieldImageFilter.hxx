@@ -184,7 +184,7 @@ InverseDisplacementFieldImageFilter< TInputImage, TOutputImage >
 
     for ( unsigned int i = 0; i < ImageDimension; i++ )
       {
-      targetPoint[i] = -value[i];
+      targetPoint[i] = sourcePoint[i]+value[i];
       }
     target->InsertElement(landmarkId, targetPoint);    // revert direction of
                                                        // displacement
@@ -195,8 +195,8 @@ InverseDisplacementFieldImageFilter< TInputImage, TOutputImage >
 
   itkDebugMacro(<< "Number of Landmarks created = " <<  numberOfLandmarks);
 
-  m_KernelTransform->GetTargetLandmarks()->SetPoints(target);
-  m_KernelTransform->GetSourceLandmarks()->SetPoints(source);
+  m_KernelTransform->GetTargetLandmarks()->SetPoints(source);
+  m_KernelTransform->GetSourceLandmarks()->SetPoints(target);
 
   itkDebugMacro(<< "Before ComputeWMatrix() ");
 
@@ -262,7 +262,7 @@ InverseDisplacementFieldImageFilter< TInputImage, TOutputImage >
 
     for ( unsigned int i = 0; i < ImageDimension; i++ )
       {
-      inverseDisplacement[i] = interpolation[i];
+      inverseDisplacement[i] = interpolation[i]-outputPoint[i];
       }
 
     outIt.Set(inverseDisplacement);   // set inverse displacement.
